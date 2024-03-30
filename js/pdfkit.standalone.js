@@ -2984,6 +2984,8 @@ class LineWrapper extends events.EventEmitter {
     });
   }
   wordWidth(word) {
+    //remove new line characters
+    word = word.replace(/\n/g, '');
     return this.document.widthOfString(word, this) + this.characterSpacing + this.wordSpacing;
   }
   canFit(word, w) {
@@ -3002,20 +3004,6 @@ class LineWrapper extends events.EventEmitter {
       var shouldContinue;
       let word = text.slice((last != null ? last.position : undefined) || 0, bk.position);
       let w = wordWidths[word] != null ? wordWidths[word] : wordWidths[word] = this.wordWidth(word);
-      if (word.includes('\n')) {
-        let parts = word.split('\n');
-        for (let i = 0; i < parts.length; i++) {
-          let part = parts[i];
-          let width = this.wordWidth(part);
-          shouldContinue = fn(part, width, bk, last);
-          if (shouldContinue === false) break;
-        }
-        last = {
-          required: false
-        };
-        if (shouldContinue === false) break;
-        continue;
-      }
 
       // if the word is longer than the whole line, chop it up
       // TODO: break by grapheme clusters, not JS string characters
